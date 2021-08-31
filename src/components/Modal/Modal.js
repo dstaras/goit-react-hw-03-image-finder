@@ -1,5 +1,6 @@
 import React from "react";
 import styles from "./Modal.module.css";
+import PropTypes from "prop-types";
 
 class Modal extends React.Component {
   componentDidMount() {
@@ -17,13 +18,19 @@ class Modal extends React.Component {
     }
   };
 
+  handleBackdropClick = (event) => {
+    if (event.currentTarget === event.target) {
+      this.props.closeModal();
+    }
+  };
+
   render() {
-    const { images, imgId, closeModal } = this.props;
+    const { images, imgId } = this.props;
     const imageId = images.find((image) => {
       return +image.id === +imgId;
     });
     return (
-      <div className={styles.Overlay} onClick={closeModal}>
+      <div className={styles.Overlay} onClick={this.handleBackdropClick}>
         <div className={styles.Modal}>
           <img
             className={styles.ModalImage}
@@ -35,5 +42,9 @@ class Modal extends React.Component {
     );
   }
 }
+
+Modal.propTypes = {
+  closeModal: PropTypes.func.isRequired,
+};
 
 export default Modal;

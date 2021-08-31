@@ -22,10 +22,6 @@ class App extends Component {
     this.galleryRef = React.createRef();
   }
 
-  componentDidMount() {
-    this.getImages();
-  }
-
   getSnapshotBeforeUpdate() {
     if (this.galleryRef && this.galleryRef.current) {
       return (
@@ -36,7 +32,7 @@ class App extends Component {
     }
   }
 
-  componentDidUpdate(prevProps, prevState, snapshot) {
+  componentDidUpdate(prevState, snapshot) {
     if (
       this.state.data !== prevState.data &&
       this.state.page !== 1 &&
@@ -51,7 +47,7 @@ class App extends Component {
 
   getImages = async () => {
     try {
-      this.setState({ loading: true });
+      this.setState({ loading: false });
       const response = await axios.get(
         `https://pixabay.com/api/?q=${this.state.query}&page=${this.state.page}&key=22389576-6dc946f066e9adfceedfbeb2d&image_type=photo&orientation=horizontal&per_page=12`
       );
@@ -75,6 +71,8 @@ class App extends Component {
 
   loadMoreImages = () => {
     this.setState(({ page }) => ({ page: page + 1 }), this.getImages);
+    this.setState({ page: this.state.page + 1 });
+    this.setState({ loading: true });
   };
 
   openModal = (id) => {
@@ -110,7 +108,8 @@ class App extends Component {
             closeModal={this.closeModal}
           />
         )}
-        {loading ? <Loader /> : <Button onClick={this.loadMoreImages} />}
+        {loading && <Loader />}
+        {data.length > 0 && <Button onClick={this.loadMoreImages} />}
       </>
     );
   }
